@@ -1,0 +1,6 @@
+matplotlib==3.7.5
+opencv-python==4.9.0.80
+picamera2==0.3.18
+pyserial==3.5
+RubikTwoPhase==1.1.1
+rubikscolorresolver @ git+https://github.com/dwalton76/rubiks-color-resolver.git
