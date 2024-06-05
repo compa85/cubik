@@ -215,6 +215,8 @@ def selectVertices(camera):
     for vertex in vertices:
       cv.circle(frame, (vertex[0], vertex[1]), 10, (0, 255, 0), 2)
 
+    cv.imshow("Configuration", frame)
+
     # finchè non sono stati selezionati tutti i 7 vertici, eseguo detectClick
     if len(vertices) < 7:
       cv.setMouseCallback("Configuration", detectClick, vertices)
@@ -222,8 +224,6 @@ def selectVertices(camera):
     else:
       cv.setMouseCallback("Configuration", lambda *args: None)
 
-    cv.imshow("Configuration", frame)
-    
     # aspetto un input dalla tastiera per 5 millisecondi
     key = cv.waitKey(5)
     # se è stata premuta la c, i vertici selezionati vengono cancellati
