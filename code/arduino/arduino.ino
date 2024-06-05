@@ -1,3 +1,6 @@
+#include <Servo.h>
+
+
 // left motor
 const int leftEn = 24;
 const int leftDir = 22;
@@ -6,7 +9,7 @@ const int leftStep = 23;
 const int rightEn = 28;
 const int rightDir = 26;
 const int rightStep = 27;
-// front motor
+// front motorL
 const int frontEn = 32;
 const int frontDir = 30;
 const int frontStep = 31;
@@ -22,6 +25,19 @@ const int upStep = 39;
 const int downEn = 44;
 const int downDir = 42;
 const int downStep = 43;
+
+// servo motors
+const int leftServoPin = 48;
+const int rightServoPin = 49;
+const int frontServoPin = 50;
+const int backServoPin = 51;
+const int upServoPin = 52;
+Servo leftServo;
+Servo rightServo;
+Servo frontServo;
+Servo backServo;
+Servo upServo;
+
 // speed
 const int speed = 200;
 // serial read
@@ -29,6 +45,8 @@ bool isReadable = true;
 char char1;
 char char2;
 char char3;
+// servo position
+int pos = 0;
 
 
 // ============================== SETUP =============================
@@ -61,6 +79,18 @@ void setup() {
   pinMode(downStep, OUTPUT);
 
   disableMotors();
+
+  leftServo.attach(leftServoPin);
+  rightServo.attach(rightServoPin);
+  frontServo.attach(frontServoPin);
+  backServo.attach(backServoPin);
+  upServo.attach(upServoPin);
+
+  leftServo.write(0);
+  rightServo.write(0);
+  frontServo.write(0);
+  backServo.write(0);
+  upServo.write(0);
 }
 
 
@@ -72,11 +102,17 @@ void loop() {
     for(int i=0; i<movements.length(); i++) {
       char1 = movements.charAt(i);
 
-      if(char1=='I') {
+      if(char1=='1') {
         enableMotors();
       }
-      else if(char1=='O') {
+      else if(char1=='2') {
         disableMotors();
+      }
+      else if(char1=='3') {
+        hookCube();
+      }
+      else if(char1=='4') {
+        unHookCube();
       }
       else if(i+1<movements.length()) {
         char2 = movements.charAt(i+1);
@@ -124,6 +160,38 @@ void disableMotors() {
   digitalWrite(upEn, HIGH);
   digitalWrite(downEn, HIGH);
   Serial.println("Motors Disabled");
+}
+
+
+// =========================== HOOK CUBE ============================
+void hookCube() {
+  if(pos != 80) {
+    for (pos = pos; pos <= 80; pos += 1) {
+      // in steps of 1 degree
+      leftServo.write(pos);
+      rightServo.write(pos);
+      frontServo.write(pos);
+      backServo.write(pos);
+      upServo.write(pos);
+      delay(15);
+    }
+  }
+}
+
+
+// ========================== UNHOOK CUBE ===========================
+void unHookCube() {
+  if(pos!=0) {
+    for (pos = pos; pos >= 0; pos -= 1) {
+    // in steps of 1 degree
+    leftServo.write(pos);
+    rightServo.write(pos);
+    frontServo.write(pos);
+    backServo.write(pos);
+    upServo.write(pos);
+    delay(15);
+    }
+  }
 }
 
 
