@@ -9,7 +9,7 @@ const int leftStep = 23;
 const int rightEn = 28;
 const int rightDir = 26;
 const int rightStep = 27;
-// front motorL
+// front motor
 const int frontEn = 32;
 const int frontDir = 30;
 const int frontStep = 31;
