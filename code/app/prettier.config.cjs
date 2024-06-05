@@ -1,0 +1,27 @@
+/** @type {import("prettier").Config} */
+module.exports = {
+  tabWidth: 2,
+  useTabs: false,
+  printWidth: 140,
+  endOfLine: "lf",
+  semi: true,
+  singleQuote: false,
+  arrowParens: "always",
+  htmlWhitespaceSensitivity: "css",
+  tailwindFunctions: ["cn", "cva", "clsx"],
+  importOrder: [
+    "^(react/(.*)$)|^(react$)",
+    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
+    "^@/lib/(.*)$",
+    "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
+    "^@/app/(.*)$",
+    "^@/styles/(.*)$",
+    "^@fortawesome/(.*)$",
+    "^[./]",
+  ],
+  importOrderSeparation: false,
+  importOrderSortSpecifiers: true,
+  plugins: ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+};
