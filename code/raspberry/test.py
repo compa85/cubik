@@ -16,6 +16,8 @@ def main():
   upperFace, leftFace, frontFace = utils.findFaces(vertices1, 0)
   # catturo un frame
   frame = utils.getFrame(camera)
+  # escludo le braccia di aggacio dal frame
+  frame = utils.maskArms(frame)
   # scansiono il cubo, trovando i colori rgb di ogni facelet
   upperColors, leftColors, frontColors = utils.scanCube(frame, (upperFace, leftFace, frontFace))
   

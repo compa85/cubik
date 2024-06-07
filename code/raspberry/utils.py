@@ -197,6 +197,37 @@ def getFrame(camera):
   return frame
 
 
+# ============================ MASK ARMS =============================
+# funzione per rimuovere le braccia che agganciano il cubo dal frame (presupponendo siano nere)
+def maskArms(frame):
+  # definisco il range di colori da rimuovere 
+  lowerBlack = np.array([0, 0, 0]) 
+  upperBlack = np.array([80, 80, 80])
+  # creo una maschera
+  mask = cv.inRange(frame, lowerBlack, upperBlack)
+  # aggiungo il canale alfa al frame
+  result = cv.cvtColor(frame, cv.COLOR_BGR2BGRA)
+  # imposto l'area della maschera trasparente
+  result[mask != 0, 3] = 0
+  return result
+
+
+# =========================== AVERAGE COLOR ==========================
+# funzione per calcolare la media di una roi
+def averageColor(roi):
+  # estraggo i canali bgr e il canale alfa
+  b, g, r, a = cv.split(roi)
+  # creo una maschera per i pixel non trasparenti
+  mask = a > 0
+  # calcolo la media dei pixel non trasparenti per ciascun canale
+  media_b = np.mean(b[mask])
+  media_g = np.mean(g[mask])
+  media_r = np.mean(r[mask])
+  # combino le medie in un'unica variabile
+  mean = (media_b, media_g, media_r)
+  return mean
+
+
 # =========================== DETECT CLICK ===========================
 # funzione per aggiungere il vertice cliccato all'array vertices
 def detectClick(event, x, y, flags, vertices):
@@ -204,7 +235,7 @@ def detectClick(event, x, y, flags, vertices):
     vertices.append((x, y))
 
 
-# ========================== SELECT VERTICES ==========================
+# ========================== SELECT VERTICES =========================
 # funzione per selezionare manualmente i vertici del cubo
 def selectVertices(camera):
   vertices = []
@@ -239,8 +270,8 @@ def selectVertices(camera):
     # se è stato premuto esc o la q, il programma viene terminato
     elif key == 27 or key == ord("q"):
       return
-    
-    
+
+
 # ======================= PERSPECTIVE TRANSFORM ======================
 # funzione per effettuare una trasformazione prospettica partendo da un frame e 4 punti su di esso
 def perspectiveTransform(frame, face):
@@ -404,17 +435,13 @@ def scanCube(frame, faces):
     roiFace2 = face2Frame[y1:y2, x1:x2]
     roiFace3 = face3Frame[y1:y2, x1:x2]
     # calcolo la media bgr di ogni roi
-    roiFace1Average = cv.mean(roiFace1)
-    roiFace2Average = cv.mean(roiFace2)
-    roiFace3Average = cv.mean(roiFace3)
+    roiFace1Average = averageColor(roiFace1)
+    roiFace2Average = averageColor(roiFace2)
+    roiFace3Average = averageColor(roiFace3)
     # converto le medie bgr in int
     roiFace1Average = tuple(map(int, roiFace1Average))
     roiFace2Average = tuple(map(int, roiFace2Average))
     roiFace3Average = tuple(map(int, roiFace3Average))
-    # converto le medie bgr in rgb
-    roiFace1Average = convertRgbBgr(roiFace1Average)
-    roiFace2Average = convertRgbBgr(roiFace2Average)
-    roiFace3Average = convertRgbBgr(roiFace3Average)
     # aggiungo le medie rgb ai corrispettivi array
     face1Colors.append(roiFace1Average)
     face2Colors.append(roiFace2Average)
