@@ -1,17 +1,23 @@
 # ============================ LIBRARIES =============================
 import utils
+import argparse
 import rubikscolorresolver.solver as colorSolver
 import twophase.solver as solver
 
 
 # =============================== MAIN ===============================
 def main():
+  # analizzo gli argomenti passati come parametri
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-t", "--type", help = "type of camera (system or raspi)", choices=["system", "raspi"], default="raspi")
+  args = parser.parse_args()
+  cameraType = args.type
+  
   # carico le facce del cubo dai file json, creati tramite il config.py
   faces0 = utils.loadFaces("cam0.json")
   faces1 = utils.loadFaces("cam1.json")
 
   # inizializzo camera0 e camera1 in base al loro tipo (system o raspi)
-  cameraType = "system"
   camera0 = utils.getCamera(cameraType, 0)
   camera1 = utils.getCamera(cameraType, 1)
 
@@ -26,6 +32,10 @@ def main():
   elif cameraType == "system":
     camera0.release()
     camera1.release()
+    
+  # escludo le braccia di aggacio dai frame
+  frame0 = utils.maskArms(frame0)
+  frame1 = utils.maskArms(frame1)
 
   # scansiono il cubo, trovando i colori rgb di ogni facelet
   upperColors, leftColors, frontColors = utils.scanCube(frame0, faces0)

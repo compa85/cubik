@@ -7,7 +7,7 @@ import argparse
 def main():
   # analizzo gli argomenti passati come parametri
   parser = argparse.ArgumentParser()
-  parser.add_argument("-t", "--type", help = "type of camera (system or raspi)", choices=["system", "raspi"], default="system")
+  parser.add_argument("-t", "--type", help = "type of camera (system or raspi)", choices=["system", "raspi"], default="raspi")
   parser.add_argument("-c", "--camera", help = "camera to use (0 or 1)", type=int, choices=[0, 1], default=0)
   parser.add_argument("-p", "--position", help = "position of the camera (0=up or 1=down)", type=int, choices=[0, 1])
   args = parser.parse_args()
