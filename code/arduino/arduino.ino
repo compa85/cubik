@@ -50,7 +50,7 @@ const int posServoBack = 50;
 
 // speed
 const int motorSpeed = 200; // delay in microseconds
-const int servoSpeed = 15; // delay in milliseconds
+const int servoSpeed = 15;  // delay in milliseconds
 
 // serial read
 bool isReadable = true;
@@ -107,32 +107,32 @@ void setup() {
 
 // ============================== LOOP ==============================
 void loop() {
-  if(Serial.available()) {
+  if (Serial.available()) {
     String movements = Serial.readStringUntil('\n');
 
-    for(int i=0; i<movements.length(); i++) {
+    for (int i = 0; i < movements.length(); i++) {
       char1 = movements.charAt(i);
 
-      if(char1=='1') {
+      if (char1 == '1') {
         enableMotors();
       }
-      else if(char1=='2') {
+      else if (char1 == '2') {
         disableMotors();
       }
-      else if(char1=='3') {
+      else if (char1 == '3') {
         hookCube();
       }
-      else if(char1=='4') {
+      else if (char1 == '4') {
         unHookCube();
       }
-      else if(i+1<movements.length()) {
-        char2 = movements.charAt(i+1);
-        if(char2=='2') {
+      else if (i + 1 < movements.length()) {
+        char2 = movements.charAt(i + 1);
+        if (char2 == '2') {
           move(char1, true);
           move(char1, true);
           i++;
         }
-        else if(char2=='\'') {
+        else if (char2 == '\'') {
           move(char1, false);
           i++;
         }
@@ -171,6 +171,58 @@ void disableMotors() {
   digitalWrite(upEn, HIGH);
   digitalWrite(downEn, HIGH);
   Serial.println("Motors Disabled");
+}
+
+
+// =========================== MOVE MOTOR ===========================
+void move(char motor, bool dir) {
+  int dirPin, stepPin;
+
+  switch (motor) {
+  case 'L':
+    dirPin = leftDir;
+    stepPin = leftStep;
+    break;
+
+  case 'R':
+    dirPin = rightDir;
+    stepPin = rightStep;
+    break;
+
+  case 'F':
+    dirPin = frontDir;
+    stepPin = frontStep;
+    break;
+
+  case 'B':
+    dirPin = backDir;
+    stepPin = backStep;
+    break;
+
+  case 'U':
+    dirPin = upDir;
+    stepPin = upStep;
+    break;
+
+  case 'D':
+    dirPin = downDir;
+    stepPin = downStep;
+    break;
+  }
+
+  if (dir) {
+    digitalWrite(dirPin, HIGH);
+  }
+  else {
+    digitalWrite(dirPin, LOW);
+  }
+
+  for (int i = 0; i < 400; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(motorSpeed);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(motorSpeed);
+  }
 }
 
 
@@ -221,56 +273,4 @@ void unHookCube() {
 
   hooked = false;
   Serial.println("Unhook");
-}
-
-
-// =========================== MOVE MOTOR ===========================
-void move(char motor, bool dir) {
-  int dirPin, stepPin;
-
-  switch(motor) {
-    case 'L':
-    dirPin = leftDir;
-    stepPin = leftStep;
-    break;
-
-    case 'R':
-    dirPin = rightDir;
-    stepPin = rightStep;
-    break;
-
-    case 'F':
-    dirPin = frontDir;
-    stepPin = frontStep;
-    break;
-
-    case 'B':
-    dirPin = backDir;
-    stepPin = backStep;
-    break;
-
-    case 'U':
-    dirPin = upDir;
-    stepPin = upStep;
-    break;
-
-    case 'D':
-    dirPin = downDir;
-    stepPin = downStep;
-    break;
-  }
-
-  if(dir) {
-    digitalWrite(dirPin, HIGH);
-  }
-  else {
-    digitalWrite(dirPin, LOW);
-  }
-
-  for (int i = 0; i < 400; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(motorSpeed);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(motorSpeed);
-  }
 }

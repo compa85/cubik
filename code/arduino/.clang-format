@@ -1,0 +1,3 @@
+BreakBeforeBraces: Custom
+BraceWrapping:
+  BeforeElse: true
