@@ -1,96 +1,107 @@
 #include <Servo.h>
 
 
+// up motor
+const int upEn = 24;
+const int upDir = 22;
+const int upStep = 23;
 // left motor
-const int leftEn = 24;
-const int leftDir = 22;
-const int leftStep = 23;
-// right motor
-const int rightEn = 28;
-const int rightDir = 26;
-const int rightStep = 27;
+const int leftEn = 28;
+const int leftDir = 26;
+const int leftStep = 27;
 // front motor
 const int frontEn = 32;
 const int frontDir = 30;
 const int frontStep = 31;
+// right motor
+const int rightEn = 36;
+const int rightDir = 34;
+const int rightStep = 35;
 // back motor
-const int backEn = 36;
-const int backDir = 34;
-const int backStep = 35;
-// up motor
-const int upEn = 40;
-const int upDir = 38;
-const int upStep = 39;
+const int backEn = 40;
+const int backDir = 38;
+const int backStep = 39;
 // down motor
 const int downEn = 44;
 const int downDir = 42;
 const int downStep = 43;
 
 // servo motors
-const int leftServoPin = 48;
-const int rightServoPin = 49;
+const int upServoPin = 50;
+const int leftServoPin = 49;
 const int frontServoPin = 50;
-const int backServoPin = 51;
-const int upServoPin = 52;
-Servo leftServo;
-Servo rightServo;
-Servo frontServo;
-Servo backServo;
+const int rightServoPin = 51;
+const int backServoPin = 52;
+
 Servo upServo;
+Servo leftServo;
+Servo frontServo;
+Servo rightServo;
+Servo backServo;
+
+bool hooked = false;
+
+// servo max positions
+const int posServoUp = 45;
+const int posServoLeft = 60;
+const int posServoFront = 60;
+const int posServoRight = 80;
+const int posServoBack = 50;
 
 // speed
-const int speed = 200;
+const int motorSpeed = 200; // delay in microseconds
+const int servoSpeed = 15; // delay in milliseconds
+
 // serial read
 bool isReadable = true;
 char char1;
 char char2;
 char char3;
-// servo position
-int pos = 0;
 
 
 // ============================== SETUP =============================
 void setup() {
   Serial.begin(9600);
 
-  // left
-  pinMode(leftEn, OUTPUT);
-  pinMode(leftDir, OUTPUT);
-  pinMode(leftStep, OUTPUT);
-  // right
-  pinMode(rightEn, OUTPUT);
-  pinMode(rightDir, OUTPUT);
-  pinMode(rightStep, OUTPUT);
-  // front
-  pinMode(frontEn, OUTPUT);
-  pinMode(frontDir, OUTPUT);
-  pinMode(frontStep, OUTPUT);
-  // back
-  pinMode(backEn, OUTPUT);
-  pinMode(backDir, OUTPUT);
-  pinMode(backStep, OUTPUT);
-  // up
+  // up motor
   pinMode(upEn, OUTPUT);
   pinMode(upDir, OUTPUT);
   pinMode(upStep, OUTPUT);
-  // down
+  // left motor
+  pinMode(leftEn, OUTPUT);
+  pinMode(leftDir, OUTPUT);
+  pinMode(leftStep, OUTPUT);
+  // front motor
+  pinMode(frontEn, OUTPUT);
+  pinMode(frontDir, OUTPUT);
+  pinMode(frontStep, OUTPUT);
+  // right motor
+  pinMode(rightEn, OUTPUT);
+  pinMode(rightDir, OUTPUT);
+  pinMode(rightStep, OUTPUT);
+  // back motor
+  pinMode(backEn, OUTPUT);
+  pinMode(backDir, OUTPUT);
+  pinMode(backStep, OUTPUT);
+  // down motor
   pinMode(downEn, OUTPUT);
   pinMode(downDir, OUTPUT);
   pinMode(downStep, OUTPUT);
 
-  disableMotors();
-
-  leftServo.attach(leftServoPin);
-  rightServo.attach(rightServoPin);
-  frontServo.attach(frontServoPin);
-  backServo.attach(backServoPin);
+  // servo motors
   upServo.attach(upServoPin);
+  leftServo.attach(leftServoPin);
+  frontServo.attach(frontServoPin);
+  rightServo.attach(rightServoPin);
+  backServo.attach(backServoPin);
 
-  leftServo.write(0);
-  rightServo.write(0);
-  frontServo.write(0);
-  backServo.write(0);
+  // disable all motors
+  disableMotors();
   upServo.write(0);
+  leftServo.write(0);
+  frontServo.write(0);
+  rightServo.write(0);
+  backServo.write(0);
 }
 
 
@@ -163,35 +174,53 @@ void disableMotors() {
 }
 
 
+// =========================== MOVE SERVO ===========================
+void moveServo(Servo servo, int pos, int posMax) {
+  if (pos > 0 && pos < posMax) {
+    servo.write(pos);
+  }
+}
+
+
 // =========================== HOOK CUBE ============================
 void hookCube() {
-  if(pos != 80) {
-    for (pos = pos; pos <= 80; pos += 1) {
-      // in steps of 1 degree
-      leftServo.write(pos);
-      rightServo.write(pos);
-      frontServo.write(pos);
-      backServo.write(pos);
-      upServo.write(pos);
-      delay(15);
+  if (!hooked) {
+    for (int pos = 0; pos <= posServoUp; pos += 1) {
+      moveServo(upServo, pos, posServoUp);
+      delay(servoSpeed);
+    }
+
+    delay(500);
+
+    for (int pos = 0; pos <= 80; pos += 1) {
+      moveServo(leftServo, pos, posServoLeft);
+      moveServo(frontServo, pos, posServoFront);
+      moveServo(rightServo, pos, posServoRight);
+      moveServo(backServo, pos, posServoBack);
+      delay(servoSpeed);
     }
   }
+
+  hooked = true;
+  Serial.println("Hook");
 }
 
 
 // ========================== UNHOOK CUBE ===========================
 void unHookCube() {
-  if(pos!=0) {
-    for (pos = pos; pos >= 0; pos -= 1) {
-    // in steps of 1 degree
-    leftServo.write(pos);
-    rightServo.write(pos);
-    frontServo.write(pos);
-    backServo.write(pos);
-    upServo.write(pos);
-    delay(15);
+  if (hooked) {
+    for (int pos = 80; pos >= 0; pos -= 1) {
+      moveServo(upServo, pos, posServoUp);
+      moveServo(leftServo, pos, posServoLeft);
+      moveServo(frontServo, pos, posServoFront);
+      moveServo(rightServo, pos, posServoRight);
+      moveServo(backServo, pos, posServoBack);
+      delay(servoSpeed);
     }
   }
+
+  hooked = false;
+  Serial.println("Unhook");
 }
 
 
@@ -240,8 +269,8 @@ void move(char motor, bool dir) {
 
   for (int i = 0; i < 400; i++) {
     digitalWrite(stepPin, HIGH);
-    delayMicroseconds(speed);
+    delayMicroseconds(motorSpeed);
     digitalWrite(stepPin, LOW);
-    delayMicroseconds(speed);
+    delayMicroseconds(motorSpeed);
   }
 }
