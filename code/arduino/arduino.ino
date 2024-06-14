@@ -27,7 +27,7 @@ const int downDir = 42;
 const int downStep = 43;
 
 // servo motors
-const int upServoPin = 50;
+const int upServoPin = 48;
 const int leftServoPin = 49;
 const int frontServoPin = 50;
 const int rightServoPin = 51;
@@ -44,9 +44,9 @@ bool hooked = false;
 // servo max positions
 const int posServoUp = 45;
 const int posServoLeft = 60;
-const int posServoFront = 60;
+const int posServoFront = 48;
 const int posServoRight = 80;
-const int posServoBack = 50;
+const int posServoBack = 52;
 
 // speed
 const int motorSpeed = 200; // delay in microseconds
@@ -139,11 +139,11 @@ void loop() {
         else {
           move(char1, true);
         }
-        delay(50);
+        delay(60);
       }
       else {
         move(char1, true);
-        delay(50);
+        delay(60);
       }
     }
   }
@@ -237,7 +237,7 @@ void moveServo(Servo servo, int pos, int posMax) {
 // =========================== HOOK CUBE ============================
 void hookCube() {
   if (!hooked) {
-    for (int pos = 0; pos <= posServoUp; pos += 1) {
+    for (int pos = 0; pos <= 80; pos += 1) {
       moveServo(upServo, pos, posServoUp);
       delay(servoSpeed);
     }
