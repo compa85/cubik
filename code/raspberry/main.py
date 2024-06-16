@@ -2,7 +2,7 @@
 import utils
 import argparse
 import cv2 as cv
-import rubikscolorresolver.solver as colorSolver
+from rubikscolorresolver.solver import RubiksColorSolverGeneric
 import twophase.solver as solver
 
 
@@ -50,10 +50,12 @@ def main():
 
   scan_data = eval(json)
   for key, value in scan_data.items():
+    # converto il valore bgr in rgb
+    value = utils.convertRgbBgr(value)
     scan_data[key] = tuple(value)
   
   # identifico il colore di ciascuna facelet, partendo dagli rgb
-  cube = colorSolver(3)
+  cube = RubiksColorSolverGeneric(3)
   cube.enter_scan_data(scan_data)
   cube.crunch_colors()
   cube.print_cube()

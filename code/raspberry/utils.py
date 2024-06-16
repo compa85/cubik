@@ -236,14 +236,14 @@ def detectClick(event, x, y, flags, vertices):
 
 
 # ========================== SELECT VERTICES =========================
-# funzione per selezionare manualmente i vertici del cubo
-def selectVertices(camera, cameraPosition):
+# funzione per selezionare i vertici del cubo. Se la posizione della camera è 0, il frame viene ruotato
+def selectVertices(camera, cameraPosition = None):
   vertices = []
 
   while True:
     frame = getFrame(camera)
     
-    # se la camera è quella superiore, ruoto di 180 gradi il frame
+    # se la camera è quella superiore (cam0), ruoto di 180 gradi il frame
     if cameraPosition == 0:
       frame = cv.rotate(frame, cv.ROTATE_180)
     

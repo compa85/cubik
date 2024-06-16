@@ -8,12 +8,14 @@ import twophase.solver as solver
 def main():
   # inizializzo l'oggetto camera in base al tipo (system o raspi)
   cameraType = "system"
-  camera = utils.getCamera(cameraType, 0)
-
+  cameraNumber = 0
+  camera = utils.getCamera(cameraType, cameraNumber)
+  
+  cameraPosition = 0
   # seleziono manualmente i vertici della cam0
   vertices1 = utils.selectVertices(camera)
   # trovo i vertici delle 3 facce
-  upperFace, leftFace, frontFace = utils.findFaces(vertices1, 0)
+  upperFace, leftFace, frontFace = utils.findFaces(vertices1, cameraPosition)
   # catturo un frame
   frame = utils.getFrame(camera)
   # escludo le braccia di aggacio dal frame
@@ -21,12 +23,15 @@ def main():
   # scansiono il cubo, trovando i colori rgb di ogni facelet
   upperColors, leftColors, frontColors = utils.scanCube(frame, (upperFace, leftFace, frontFace))
   
+  cameraPosition = 1
   # seleziono manualmente i vertici della cam1
   vertices2 = utils.selectVertices(camera)
   # trovo i vertici delle 3 facce
-  rightFace, backFace, downFace = utils.findFaces(vertices2, 1)
+  rightFace, backFace, downFace = utils.findFaces(vertices2, cameraPosition)
   # catturo un frame
   frame = utils.getFrame(camera)
+  # escludo le braccia di aggacio dal frame
+  frame = utils.maskArms(frame)
   # scansiono il cubo, trovando i colori rgb di ogni facelet
   rightColors, backColors, downColors = utils.scanCube(frame, (rightFace, backFace, downFace))
 
@@ -35,6 +40,8 @@ def main():
 
   scan_data = eval(json)
   for key, value in scan_data.items():
+    # converto il valore bgr in rgb
+    value = utils.convertRgbBgr(value)
     scan_data[key] = tuple(value)
 
   # identifico il colore di ciascuna facelet, partendo dagli rgb
