@@ -202,7 +202,7 @@ def getFrame(camera):
 def maskArms(frame):
   # definisco il range di colori da rimuovere 
   lowerBlack = np.array([0, 0, 0]) 
-  upperBlack = np.array([80, 80, 80])
+  upperBlack = np.array([60, 80, 80])
   # creo una maschera
   mask = cv.inRange(frame, lowerBlack, upperBlack)
   # aggiungo il canale alfa al frame
@@ -282,9 +282,9 @@ def perspectiveTransform(frame, face):
   if(len(face) != 4):
     return None
   
-  pts = np.float32([(0, 0), (300, 0), (300, 300), (0, 300)])
+  pts = np.float32([(0, 0), (400, 0), (400, 400), (0, 400)])
   matrix = cv.getPerspectiveTransform(np.float32([face]), pts)
-  result = cv.warpPerspective(frame, matrix, (300, 300))
+  result = cv.warpPerspective(frame, matrix, (400, 400))
   return result
 
 
@@ -422,14 +422,14 @@ def scanCube(frame, faces):
   face3Frame = perspectiveTransform(frame, face3) # front/down face
 
   # trovo i vertici delle 9 facelet, che sono uguali per tutte le 3 facce (essendo ogni faccia vista frontalmente)
-  facelet = findFacelet([(0, 0), (300, 0), (300, 300), (0, 300)])
+  facelet = findFacelet([(0, 0), (400, 0), (400, 400), (0, 400)])
   face1Colors = []
   face2Colors = []
   face3Colors = []
 
   for f in facelet:
     # offset in px della roi (region of interest) rispetto alla facelet, in modo da evitare errori nella rilevazione del colore
-    offset = 10
+    offset = 30
     x1 = f[0][0] + offset
     x2 = f[1][0] - offset
     y1 = f[0][1] + offset
