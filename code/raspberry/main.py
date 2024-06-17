@@ -1,5 +1,6 @@
 # ============================ LIBRARIES =============================
 import utils
+import serialUtils
 import argparse
 import cv2 as cv
 from rubikscolorresolver.solver import RubiksColorSolverGeneric
@@ -64,6 +65,9 @@ def main():
   # trovo la stringa di risoluzione del cubo
   resolution = solver.solve(cubeString, 0, 0.2)
   print(resolution)
+  
+  # invio la stringa di risoluzione ad arduino
+  serialUtils.write(resolution)
 
 
 if __name__ == "__main__":
