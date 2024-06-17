@@ -66,8 +66,15 @@ def main():
   resolution = solver.solve(cubeString, 0, 0.2)
   print(resolution)
   
-  # invio la stringa di risoluzione ad arduino
-  serialUtils.write(resolution)
+  # controllo che non ci siano stati errori nella risoluzione
+  if "error" not in resolution.lower():
+    # rimuovo dalla stringa di risoluzione i caratteri non necessari
+    resolution = resolution.replace(" ", "")
+    index = resolution.find("(")
+    resolution = resolution[:index]
+    
+    # invio la stringa di risoluzione ad arduino
+    serialUtils.write(resolution)
 
 
 if __name__ == "__main__":

@@ -127,7 +127,17 @@ void loop() {
       }
       else if (i + 1 < movements.length()) {
         char2 = movements.charAt(i + 1);
+        if (char2 == '1') {
+          move(char1, true);
+          i++;
+        }
         if (char2 == '2') {
+          move(char1, true);
+          move(char1, true);
+          i++;
+        }
+        else if (char2 == '3') {
+          move(char1, true);
           move(char1, true);
           move(char1, true);
           i++;
