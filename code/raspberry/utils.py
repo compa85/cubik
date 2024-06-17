@@ -228,17 +228,44 @@ def averageColor(roi):
   return mean
 
 
-# =========================== DETECT CLICK ===========================
+# ========================== MOUSE CALLBACK ==========================
 # funzione per aggiungere il vertice cliccato all'array vertices
-def detectClick(event, x, y, flags, vertices):
+def mouseCallback(event, x, y, flags, state):  
+  # se viene premuto il tasto sinistro del mouse
   if event == cv.EVENT_LBUTTONDOWN:
-    vertices.append((x, y))
+    # controllo se si è cliccato su un vertice già presente
+    for index, vertex in enumerate(state["vertices"]):
+      distance = ((x - vertex[0]) ** 2 + (y - vertex[1]) ** 2) ** 0.5
+      if distance <= 30:
+        state["draggingVertex"] = index
+        break
+      
+    if state["draggingVertex"] == None and len(state["vertices"]) < 7:
+      state["vertices"].append((x, y))
+  
+  # se si sta muovendo il mouse mentre è premuto il tasto sinistro
+  elif event == cv.EVENT_MOUSEMOVE:
+    if state["draggingVertex"] != None:
+      state["vertices"][state["draggingVertex"]] = (x, y)
+      state["faces"] = None
+            
+  # se viene rilasciato il tasto sinistro del mouse
+  elif event == cv.EVENT_LBUTTONUP:
+    state["draggingVertex"] = None
 
 
 # ========================== SELECT VERTICES =========================
 # funzione per selezionare i vertici del cubo. Se la posizione della camera è 0, il frame viene ruotato
-def selectVertices(camera, cameraPosition = None):
-  vertices = []
+def selectVertices(camera, cameraPosition):
+  # dizionario utilizzato per passare i valori necessari a mouseCallback()
+  state = {
+    "vertices": [],
+    "draggingVertex": None,
+    "faces": None
+  }
+  
+  cv.namedWindow("Configuration")
+  cv.setMouseCallback("Configuration", mouseCallback, state)
 
   while True:
     frame = getFrame(camera)
@@ -248,29 +275,28 @@ def selectVertices(camera, cameraPosition = None):
       frame = cv.rotate(frame, cv.ROTATE_180)
     
     # disegno i vertici
-    for vertex in vertices:
-      cv.circle(frame, (vertex[0], vertex[1]), 10, (0, 255, 0), 2)
+    for vertex in state["vertices"]:
+      cv.circle(frame, vertex, 10, (0, 255, 0), 2)
+    
+    if(len(state["vertices"]) == 7):
+      if state["faces"] == None:
+        state["faces"] = findFaces(state["vertices"], cameraPosition)
+      viewFaces(frame, state["faces"])
 
     cv.imshow("Configuration", frame)
-
-    # finchè non sono stati selezionati tutti i 7 vertici, eseguo detectClick
-    if len(vertices) < 7:
-      cv.setMouseCallback("Configuration", detectClick, vertices)
-    # altrimenti resetto la mouse callback
-    else:
-      cv.setMouseCallback("Configuration", lambda *args: None)
 
     # aspetto un input dalla tastiera per 5 millisecondi
     key = cv.waitKey(5)
     # se è stata premuta la c, i vertici selezionati vengono cancellati
     if key == ord("c"):
-      vertices = []
+      state["vertices"] = []
+      state["faces"] = None
     # se è stato premuto l'invio, vengono ritornati i vertici selezionati (se sono corretti)
     elif key == 13:
-      if checkVertices(vertices):
-        return vertices
+      if checkVertices(state["vertices"]):
+        return state["vertices"]
       else:
-        vertices = []
+        state["vertices"] = []
     # se è stato premuto esc o la q, il programma viene terminato
     elif key == 27 or key == ord("q"):
       return

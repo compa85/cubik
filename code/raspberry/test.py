@@ -13,7 +13,7 @@ def main():
   
   cameraPosition = 0
   # seleziono manualmente i vertici della cam0
-  vertices1 = utils.selectVertices(camera)
+  vertices1 = utils.selectVertices(camera, cameraPosition)
   # trovo i vertici delle 3 facce
   upperFace, leftFace, frontFace = utils.findFaces(vertices1, cameraPosition)
   # catturo un frame
@@ -25,7 +25,7 @@ def main():
   
   cameraPosition = 1
   # seleziono manualmente i vertici della cam1
-  vertices2 = utils.selectVertices(camera)
+  vertices2 = utils.selectVertices(camera, cameraPosition)
   # trovo i vertici delle 3 facce
   rightFace, backFace, downFace = utils.findFaces(vertices2, cameraPosition)
   # catturo un frame
