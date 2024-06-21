@@ -26,9 +26,6 @@ def main():
   # catturo un frame di ognuna delle 2 camere
   frame0 = utils.getFrame(camera0)
   frame1 = utils.getFrame(camera1)
-  
-  # ruoto di 180 gradi il frame della camera superiore
-  frame0 = cv.rotate(frame0, cv.ROTATE_180)
 
   # rilascio le risorse
   if cameraType == "raspi":

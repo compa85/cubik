@@ -270,10 +270,6 @@ def selectVertices(camera, cameraPosition):
   while True:
     frame = getFrame(camera)
     
-    # se la camera è quella superiore (cam0), ruoto di 180 gradi il frame
-    if cameraPosition == 0:
-      frame = cv.rotate(frame, cv.ROTATE_180)
-    
     # disegno i vertici
     for vertex in state["vertices"]:
       cv.circle(frame, vertex, 10, (0, 255, 0), 2)
