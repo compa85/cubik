@@ -7,7 +7,7 @@ import time
 
 # ========================== CONFIGURATION ===========================
 PORT = "/dev/ttyAMA0"
-BAUDRATE = 9600
+BAUDRATE = 115200
 FQBN = "arduino:avr:mega"
 RESET = 4
 

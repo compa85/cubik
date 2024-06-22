@@ -61,7 +61,7 @@ char char3;
 
 // ============================== SETUP =============================
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // up motor
   pinMode(upEn, OUTPUT);
