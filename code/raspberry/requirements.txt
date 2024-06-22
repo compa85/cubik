@@ -6,3 +6,5 @@ rubikscolorresolver @ git+https://github.com/dwalton76/rubiks-color-resolver.git
 gpiozero==2.0.1
 pyserial==3.5
 pyduinocli==0.35.0
+Flask==3.0.3
+Flask-Cors==4.0.1
