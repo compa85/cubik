@@ -131,7 +131,7 @@ void loop() {
           move(char1, true);
           i++;
         }
-        if (char2 == '2') {
+        else if (char2 == '2') {
           move(char1, true);
           move(char1, true);
           i++;
