@@ -492,8 +492,8 @@ def scanCube(cameraType):
 
   # rilascio le risorse
   if cameraType == "raspi":
-    camera0.stop()
-    camera1.stop()
+    camera0.close()
+    camera1.close()
   elif cameraType == "system":
     camera0.release()
     camera1.release()
