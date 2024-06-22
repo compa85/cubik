@@ -21,7 +21,7 @@ def main():
   # escludo le braccia di aggacio dal frame
   frame = utils.maskArms(frame)
   # scansiono il cubo, trovando i colori rgb di ogni facelet
-  upperColors, leftColors, frontColors = utils.scanCube(frame, (upperFace, leftFace, frontFace))
+  upperColors, leftColors, frontColors = utils.scanColors(frame, (upperFace, leftFace, frontFace))
   
   cameraPosition = 1
   # seleziono manualmente i vertici della cam1
@@ -33,7 +33,7 @@ def main():
   # escludo le braccia di aggacio dal frame
   frame = utils.maskArms(frame)
   # scansiono il cubo, trovando i colori rgb di ogni facelet
-  rightColors, backColors, downColors = utils.scanCube(frame, (rightFace, backFace, downFace))
+  rightColors, backColors, downColors = utils.scanColors(frame, (rightFace, backFace, downFace))
 
   # converto gli rgb delle facelet in un json
   json = utils.facesColorsToJson(upperColors, leftColors, frontColors, rightColors, backColors, downColors)

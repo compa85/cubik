@@ -20,6 +20,9 @@ def main():
 
   # seleziono manualmente i vertici
   vertices = utils.selectVertices(camera, cameraPosition)
+  
+  if vertices == None:
+    return
 
   # trovo i vertici di ciascuna faccia
   face1, face2, face3 = utils.findFaces(vertices, cameraPosition)

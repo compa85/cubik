@@ -5,12 +5,11 @@ import matplotlib.pyplot as plt
 import math
 import os.path
 import json
-try:
-  from picamera2 import Picamera2
-  from libcamera import controls
-  isPicameraInstalled = True
-except ImportError:
-  isPicameraInstalled = False
+from rubikscolorresolver.solver import RubiksColorSolverGeneric
+import twophase.solver as solver
+# commentare le seguenti due righe se non si sta utilizzando un raspberry
+from picamera2 import Picamera2
+from libcamera import controls
 
 
 # ========================== CHECK VERTICES ==========================
@@ -176,7 +175,7 @@ def sortPoints(points, clockwise = True):
 def getCamera(type, number):
   if type == "system":
     camera = cv.VideoCapture(number)
-  elif type == "raspi" and isPicameraInstalled:
+  elif type == "raspi":
     camera = Picamera2(number)
     cameraConfig = camera.create_preview_configuration({"format": "RGB888", "size": (1920, 1080)})
     camera.configure(cameraConfig)
@@ -192,7 +191,7 @@ def getFrame(camera):
   # controllo se camera è un istanza di VideoCapture o di Picamera2, al fine di catturare il frame nel modo corretto
   if isinstance(camera, cv.VideoCapture) and camera.isOpened():
     ret, frame = camera.read()
-  elif isPicameraInstalled and isinstance(camera, Picamera2):
+  elif isinstance(camera, Picamera2):
     frame = camera.capture_array()
   return frame
 
@@ -429,9 +428,9 @@ def findFacelet(face):
   return facelet
 
 
-# ============================= SCAN CUBE ============================
-# funzione per scansionare il cubo, restituendo i colori di ciascuna facelet
-def scanCube(frame, faces):
+# =========================== SCAN COLORS ============================
+# funzione per trovare la media dei colori dei pixel di ciascuna facelet
+def scanColors(frame, faces):
   face1, face2, face3 = faces
 
   # controllo che le facce abbiano 4 vertici
@@ -474,3 +473,69 @@ def scanCube(frame, faces):
     face3Colors.append(roiFace3Average)
 
   return face1Colors, face2Colors, face3Colors
+
+
+# ============================ SCAN CUBE =============================
+# funzione per scansionare il cubo
+def scanCube(cameraType):
+  # carico le facce del cubo dai file json, creati tramite config.py
+  faces0 = loadFaces("cam0.json")
+  faces1 = loadFaces("cam1.json")
+
+  # inizializzo camera0 e camera1 in base al loro tipo (raspi o system)
+  camera0 = getCamera(cameraType, 0)
+  camera1 = getCamera(cameraType, 1)
+
+  # catturo un frame di ognuna delle 2 camere
+  frame0 = getFrame(camera0)
+  frame1 = getFrame(camera1)
+
+  # rilascio le risorse
+  if cameraType == "raspi":
+    camera0.stop()
+    camera1.stop()
+  elif cameraType == "system":
+    camera0.release()
+    camera1.release()
+    
+  # escludo le braccia di aggacio dai frame
+  frame0 = maskArms(frame0)
+  frame1 = maskArms(frame1)
+
+  # scansiono il cubo, trovando i colori rgb di ogni facelet
+  upperColors, leftColors, frontColors = scanColors(frame0, faces0)
+  rightColors, backColors, downColors = scanColors(frame1, faces1)
+
+  # converto gli rgb delle facelet in un json
+  json = facesColorsToJson(upperColors, leftColors, frontColors, rightColors, backColors, downColors)
+
+  scan_data = eval(json)
+  for key, value in scan_data.items():
+    # converto il valore bgr in rgb
+    value = convertRgbBgr(value)
+    scan_data[key] = tuple(value)
+  
+  # identifico il colore di ciascuna facelet, partendo dagli rgb
+  cube = RubiksColorSolverGeneric(3)
+  cube.enter_scan_data(scan_data)
+  cube.crunch_colors()
+  cube.print_cube()
+  cubeString = "".join(cube.cube_for_kociemba_strict())
+  
+  return cubeString
+
+
+# ============================ SOLVE CUBE ============================
+# funzione per risolvere il cubo
+def solveCube(cubeString):
+  # trovo la stringa di risoluzione del cubo
+  resolution = solver.solve(cubeString, 0, 0.2)
+  
+  # controllo che non ci siano stati errori nella risoluzione
+  if "error" not in resolution.lower():
+    # rimuovo dalla stringa di risoluzione i caratteri non necessari
+    resolution = resolution.replace(" ", "")
+    index = resolution.find("(")
+    resolution = resolution[:index]
+    
+  return resolution
