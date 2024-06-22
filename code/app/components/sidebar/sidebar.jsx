@@ -52,7 +52,13 @@ export function Sidebar() {
       </header>
       <nav className="flex h-full flex-col gap-2">
         {links.map((link) => (
-          <SidebarItem name={link.name} href={link.href} icon={link.icon} current={`/${segment}` === link.href} />
+          <SidebarItem
+            key={link.name.toLowerCase()}
+            name={link.name}
+            href={link.href}
+            icon={link.icon}
+            current={`/${segment}` === link.href}
+          />
         ))}
         <div className="flex-1"></div>
         <SidebarItem
