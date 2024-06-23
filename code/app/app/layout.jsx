@@ -20,8 +20,9 @@ export default function RootLayout({ children }) {
           </aside>
           <main className="flex-1 rounded-2xl border border-gray-200 bg-white">{children}</main>
         </div>
+
+        <PrelineScript />
       </body>
-      <PrelineScript />
     </html>
   );
 }
