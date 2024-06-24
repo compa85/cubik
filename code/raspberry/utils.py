@@ -179,8 +179,8 @@ def getCamera(type, number):
     camera = Picamera2(number)
     cameraConfig = camera.create_preview_configuration({"format": "RGB888", "size": (1920, 1080)})
     camera.configure(cameraConfig)
-    camera.set_controls({"AfMode": controls.AfModeEnum.Continuous})
-    # camera.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 9.0})
+    # camera.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+    camera.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 9.0})
     camera.start()
   return camera
 
