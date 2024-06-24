@@ -49,7 +49,7 @@ const int posServoRight = 80;
 const int posServoBack = 52;
 
 // speed
-const int motorSpeed = 200; // delay in microseconds
+const int motorSpeed = 170; // delay in microseconds
 const int servoSpeed = 15;  // delay in milliseconds
 
 // serial read
@@ -149,11 +149,11 @@ void loop() {
         else {
           move(char1, true);
         }
-        delay(60);
+        delay(70);
       }
       else {
         move(char1, true);
-        delay(60);
+        delay(70);
       }
     }
   }
